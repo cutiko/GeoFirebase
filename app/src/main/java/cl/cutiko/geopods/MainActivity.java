@@ -21,6 +21,8 @@ import android.widget.Toast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 
+import cl.cutiko.geopods.map.MapFragment;
+
 public class MainActivity extends AppCompatActivity {
 
 

@@ -1,14 +1,17 @@
-package cl.cutiko.geopods;
+package cl.cutiko.geopods.map;
 
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -20,8 +23,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+import cl.cutiko.geopods.R;
+import cl.cutiko.geopods.models.GeoPod;
+import cl.cutiko.geopods.models.PodsCallback;
+
+
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, PodsCallback {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap googleMap;
@@ -67,24 +76,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        LatLng current = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        //LatLng current = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        LatLng current = new LatLng(-33.429072, -70.603748);
+        TelephonyManager telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
+        String countryIso = telephonyManager.getSimCountryIso();
+        new PopulatePods(this).getNear(current, countryIso);
         googleMap.addMarker(new MarkerOptions().position(current));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 15));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 14));
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Toast.makeText(getContext(), "Conexión Suspendida", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Toast.makeText(getContext(), "Conexión Fallida", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         googleApiClient.disconnect();
+    }
+
+    @Override
+    public void podsReady(List<GeoPod> geoPods) {
+        for (GeoPod geoPod : geoPods) {
+            LatLng latLng = new LatLng(geoPod.getLatitude(), geoPod.getLongitude());
+            googleMap.addMarker(new MarkerOptions().position(latLng));
+        }
     }
 }

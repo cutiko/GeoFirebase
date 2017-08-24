@@ -20,7 +20,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
@@ -82,8 +84,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         TelephonyManager telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
         String countryIso = telephonyManager.getSimCountryIso();
         new PopulatePods(this).getNear(current, countryIso);
-        googleMap.addMarker(new MarkerOptions().position(current));
+        googleMap.addMarker(new MarkerOptions().position(current).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 14));
+
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                GeoPod geoPod = (GeoPod) marker.getTag();
+                if (geoPod != null) {
+                    Toast.makeText(getContext(), geoPod.getName(), Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -106,7 +119,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public void podsReady(List<GeoPod> geoPods) {
         for (GeoPod geoPod : geoPods) {
             LatLng latLng = new LatLng(geoPod.getLatitude(), geoPod.getLongitude());
-            googleMap.addMarker(new MarkerOptions().position(latLng));
+            Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng));
+            marker.setTag(geoPod);
         }
     }
 }

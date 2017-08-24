@@ -1,4 +1,4 @@
-package cl.cutiko.geopods.map;
+package cl.cutiko.geopods.views.map;
 
 import android.content.Context;
 import android.location.Location;
@@ -57,8 +57,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         fragmentTransaction.add(R.id.mapContainer, SupportMapFragment.newInstance());
         fragmentTransaction.commitNowAllowingStateLoss();
 
-        SupportMapFragment googleMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapContainer);
-        googleMapFragment.getMapAsync(this);
+        SupportMapFragment googleMap = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapContainer);
+        googleMap.getMapAsync(this);
+
     }
 
     @Override
@@ -76,8 +77,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        //LatLng current = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        LatLng current = new LatLng(-33.429072, -70.603748);
+        LatLng current = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        //LatLng current = new LatLng(-33.429072, -70.603748);
         TelephonyManager telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
         String countryIso = telephonyManager.getSimCountryIso();
         new PopulatePods(this).getNear(current, countryIso);

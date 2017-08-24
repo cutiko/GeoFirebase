@@ -1,4 +1,4 @@
-package cl.cutiko.geopods.map;
+package cl.cutiko.geopods.views.map;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;

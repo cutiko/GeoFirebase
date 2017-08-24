@@ -22,5 +22,14 @@ public class Nodes {
         return locations(countryIso).orderByChild("latitude").startAt(minLat).endAt(maxLat);
     }
 
+    public Query categoryLocations(String countryIso) {
+        //return root.child("places_name").child(countryIso).orderByValue().startAt("not").endAt("not" + "\uf8ff");
+        return root.child("places_category").child(countryIso).orderByValue().equalTo("category1");
+    }
+
+    public Query favoriteLocations(String countryIso) {
+        return root.child("favorites").child("user_uid_1").child(countryIso);
+    }
+
 
 }

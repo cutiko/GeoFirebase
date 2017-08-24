@@ -12,6 +12,10 @@ public class Nodes {
 
     private DatabaseReference root = FirebaseDatabase.getInstance().getReference();
 
+    public DatabaseReference getRoot() {
+        return root;
+    }
+
     public DatabaseReference locations(String countryIso) {
         return root.child("locations").child(countryIso);
     }

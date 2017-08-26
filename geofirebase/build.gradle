@@ -1,15 +1,17 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.0"
+
     defaultConfig {
-        applicationId "cl.cutiko.geopods"
         minSdkVersion 17
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
@@ -24,18 +26,6 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.android.support:design:26.+'
-    compile 'com.android.support:support-v4:26.+'
-    compile 'com.google.android.gms:play-services-maps:10.2.0'
-    compile 'com.google.android.gms:play-services-location:10.2.0'
-    compile 'com.google.firebase:firebase-auth:10.2.0'
-    compile 'com.firebaseui:firebase-ui-database:1.2.0'
-    compile project(':geofirebase')
+    compile 'com.google.firebase:firebase-database:10.2.0'
     testCompile 'junit:junit:4.12'
 }
-
-
-
-
-apply plugin: 'com.google.gms.google-services'

@@ -8,18 +8,18 @@ import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 
-import cl.cutiko.geopods.models.GeoPod;
+import cl.cutiko.geopods.models.GeoPlace;
 
 /**
  * Created by cutiko on 17-08-17.
  */
 
-public class GeoPodsAdapter extends FirebaseIndexRecyclerAdapter<GeoPod, GeoPodsAdapter.PodsHolder> {
+public class GeoPodsAdapter extends FirebaseIndexRecyclerAdapter<GeoPlace, GeoPodsAdapter.PodsHolder> {
 
 
     public GeoPodsAdapter(Query index, DatabaseReference locations) {
         super(
-                GeoPod.class,
+                GeoPlace.class,
                 android.R.layout.simple_list_item_1,
                 PodsHolder.class,
                 index,
@@ -28,7 +28,7 @@ public class GeoPodsAdapter extends FirebaseIndexRecyclerAdapter<GeoPod, GeoPods
     }
 
     @Override
-    protected void populateViewHolder(PodsHolder viewHolder, GeoPod model, int position) {
+    protected void populateViewHolder(PodsHolder viewHolder, GeoPlace model, int position) {
         TextView textView = (TextView) viewHolder.itemView;
         textView.setText(model.getName());
     }

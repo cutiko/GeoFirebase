@@ -27,12 +27,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
+import cl.cutiko.geofirebase.GeoDistances;
+import cl.cutiko.geofirebase.GeoEvent;
 import cl.cutiko.geopods.R;
-import cl.cutiko.geopods.models.GeoPod;
-import cl.cutiko.geopods.models.PodsCallback;
+import cl.cutiko.geopods.models.GeoPlace;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, PodsCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap googleMap;
@@ -83,20 +84,38 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         //LatLng current = new LatLng(-33.429072, -70.603748);
         TelephonyManager telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
         String countryIso = telephonyManager.getSimCountryIso();
-        new PopulatePods(this).getNear(current, countryIso);
+
         googleMap.addMarker(new MarkerOptions().position(current).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 14));
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                GeoPod geoPod = (GeoPod) marker.getTag();
-                if (geoPod != null) {
-                    Toast.makeText(getContext(), geoPod.getName(), Toast.LENGTH_SHORT).show();
+                GeoPlace geoPlace = (GeoPlace) marker.getTag();
+                if (geoPlace != null) {
+                    Toast.makeText(getContext(), geoPlace.getName(), Toast.LENGTH_SHORT).show();
                 }
                 return true;
             }
         });
+
+        new GeoEvent<GeoPlace>(
+                current.latitude,
+                current.longitude,
+                GeoDistances.TWO_KM,
+                GeoPlace.class,
+                "locations",
+                countryIso
+        ) {
+            @Override
+            protected void results(List<GeoPlace> geoPods) {
+                for (GeoPlace geoPlace : geoPods) {
+                    LatLng latLng = new LatLng(geoPlace.getLatitude(), geoPlace.getLongitude());
+                    Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng));
+                    marker.setTag(geoPlace);
+                }
+            }
+        };
     }
 
     @Override
@@ -113,14 +132,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public void onDestroy() {
         super.onDestroy();
         googleApiClient.disconnect();
-    }
-
-    @Override
-    public void podsReady(List<GeoPod> geoPods) {
-        for (GeoPod geoPod : geoPods) {
-            LatLng latLng = new LatLng(geoPod.getLatitude(), geoPod.getLongitude());
-            Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng));
-            marker.setTag(geoPod);
-        }
     }
 }

@@ -17,7 +17,7 @@ import java.util.Map;
 import cl.cutiko.geopods.R;
 import cl.cutiko.geopods.adapters.SectionsPagerAdapter;
 import cl.cutiko.geopods.data.Nodes;
-import cl.cutiko.geopods.models.GeoPod;
+import cl.cutiko.geopods.models.GeoPlace;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,23 +46,23 @@ public class MainActivity extends AppCompatActivity {
                 String countryIso = telephonyManager.getSimCountryIso();
                 String key = new Nodes().locations(countryIso).push().getKey();
 
-                GeoPod reduced = new GeoPod();
+                GeoPlace reduced = new GeoPlace();
                 reduced.setLatitude(latitude);
                 reduced.setLongitude(longitude);
                 reduced.setName(name);
                 reduced.setKey(key);
 
-                GeoPod geoPod = new GeoPod();
-                geoPod.setLatitude(latitude);
-                geoPod.setLongitude(longitude);
-                geoPod.setName(name);
-                geoPod.setCategory("category1");
-                geoPod.setKey(key);
+                GeoPlace geoPlace = new GeoPlace();
+                geoPlace.setLatitude(latitude);
+                geoPlace.setLongitude(longitude);
+                geoPlace.setName(name);
+                geoPlace.setCategory("category1");
+                geoPlace.setKey(key);
 
                 DatabaseReference reference = new Nodes().getRoot();
                 Map<String, Object> map = new HashMap<>();
                 map.put("locations/"+countryIso+"/"+key, reduced);
-                map.put("places/"+countryIso+"/"+key, geoPod);
+                map.put("places/"+countryIso+"/"+key, geoPlace);
 
                 reference.updateChildren(map);
 

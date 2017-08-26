@@ -81,9 +81,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public void onConnected(@Nullable Bundle bundle) {
         Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         LatLng current = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        //LatLng current = new LatLng(-33.429072, -70.603748);
         TelephonyManager telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
         String countryIso = telephonyManager.getSimCountryIso();
+
+        //Current test data works with the following coordinates and funnel node
+        //LatLng current = new LatLng(-33.429072, -70.603748);
+        //String countryIso = "cl";
 
         googleMap.addMarker(new MarkerOptions().position(current).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 14));

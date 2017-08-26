@@ -1,6 +1,17 @@
 apply plugin: 'com.android.library'
 
+ext {
+    PUBLISH_GROUP_ID = 'cl.cutiko'
+    PUBLISH_ARTIFACT_ID = 'geofirebase'
+    PUBLISH_VERSION = '0.1.0'
+}
+
+
 android {
+    lintOptions {
+        abortOnError false
+    }
+
     compileSdkVersion 26
     buildToolsVersion "26.0.0"
 
@@ -13,6 +24,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -29,3 +41,5 @@ dependencies {
     compile 'com.google.firebase:firebase-database:10.2.0'
     testCompile 'junit:junit:4.12'
 }
+
+apply from: 'https://raw.githubusercontent.com/blundell/release-android-library/master/android-release-aar.gradle'

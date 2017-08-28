@@ -427,8 +427,3 @@ I don't think so. That is why there is funnel node with the country code. Since 
  - Better gifs! Better quality, full hd! Bigger, 2400px width! But most important, the dankest gif in the internet!
 
 **Suggestions and PRs are welcome**
-
-
-
-
-

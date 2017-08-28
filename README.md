@@ -23,20 +23,18 @@ If you are not convinced yet on using my library, let me offer you one more perk
 compile 'cl.cutiko:geofirebase:0.1.0'
 ```
 
-
-![Champion](https://media.giphy.com/media/uokhSmdmyfh2o/giphy.gif)
-
-
 You can look at this [gist](https://gist.github.com/cutiko/eb3526dafe7d29ec588a01c32074b0db), for a quick example, but please remember **your project have to add the** `google-service.json`
+
+![Champion](https://media.giphy.com/media/Nk9vmTrmOVNuw/giphy.gif)
 
 
 # How to use it?
 Is very simple:
   1. You need to create model that extend the provided in the library `GeoPod`
-  2. And for executing the query you have to instantiate an abstract class from my library `GeoEvent.
+  2. And for executing the query you have to instantiate an abstract class from my library `GeoEvent`
 
 #### Creating the model
-Since the library is ment to be used with Geolocations, then the basic model I'm providing makes sure the object being query have: *longitude and lantitude*, also a *key* (we will get to this later).
+Since the library is ment to be used with Geolocations, then the basic provided makes sure the object being query have: *longitude and lantitude*, also a *key* (we will get to this later).
 So the model you are gonna use for your *place*, *cofee shop*, or whatever is about your app have to extend `GeoPod`
 
 ```
@@ -50,10 +48,10 @@ public class GeoPlace extends GeoPod {
 
 #### Getting the data
 The code below is the anonymous instantiation mentioned before. Between the angle brackets, you have to pass your model, the same you use in the previous step.
-Then in the constructor, the first 3 arguments are for the query. The longitude and latitude will be used as a center, and the third param will be the radios to query data.
-The fourth param is your model ass a class, pass it ass in the example `YourModel.class`, include the *dot class*
+Then in the constructor, the first 3 arguments are for the query. The longitude and latitude will be used as a center, and the third param will be the radius to query the data.
+The fourth param is your model ass a class, pass it ass in the example `YourModel.class`, include the *dot class*.
 The last 2 arguments in the constructor are for doing the query in the database. Since the promise of this library is to allow you control over your data structure, then you have to tell where to query.
-The first String is the route in the database where the data is stored, and the second is funnel node to filter the data better (more information further in text).
+The first String is the route in the database where the data is stored, and the second is a funnel node to filter the data better (more information further).
 
 ```
     new GeoEvent<GeoPlace>(
@@ -74,6 +72,8 @@ The first String is the route in the database where the data is stored, and the 
         }
     };
 ```
+
+In this example when the data is return every object is placed on a marker in a Google Map
 
 If your are not familiar with doing this kind of implementations, don't worry about it. Take a deep breath and do this: write `new GeoEven<>` pass inside the angle brackets `<>` your model, and then pass every argument to the constructor, one last thing that should fix everything: **press alt+enter and select implement methods**.
 

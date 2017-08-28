@@ -7,7 +7,7 @@ There is no reason at all why you shouldn't use GeoFire, is a great library, and
 
  - I want to work with Firebase Database and Geolocations while having control of my data
 
-That is what you get! **Easy Firebase Database + Geolocations while keeping control of your Data Structure**
+That is what you get! **Easy Firebase Database queries + Geolocations, while keeping control of your Data Structure**
 
 If you are not convinced yet on using my library, let me offer you one more perk:  *I'm going to add cool gifs in the documentation, so you have fun reading it :)*
 
@@ -23,7 +23,9 @@ If you are not convinced yet on using my library, let me offer you one more perk
 compile 'cl.cutiko:geofirebase:0.1.0'
 ```
 
+
 ![Champion](https://media.giphy.com/media/uokhSmdmyfh2o/giphy.gif)
+
 
 You can look at this [gist](https://gist.github.com/cutiko/eb3526dafe7d29ec588a01c32074b0db), for a quick example, but please remember **your project have to add the** `google-service.json`
 

@@ -232,7 +232,7 @@ DatabaseReference root = FirebaseDatabase.getInstance().getReference();
 Map<String, Object> map = new HashMap<>();
 map.put("locations/"+countryIso+"/"+key, reduced);
 map.put("places/"+countryIso+"/"+key, place);
-map.put("place_category/"+countryIso+"/"+key, category);
+map.put("places_category/"+countryIso+"/"+key, category);
 
 root.updateChildren(map);
 ```
@@ -243,26 +243,192 @@ You can read more about indexing and denormalization in the [Firebase Documentat
 
 ![Mind Blown](https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif)
 
+#### What else can I do with this
+Following this data structure you could create other sort of apps, real state or maybe delivery:
 
-## Instructions
+```
+{
+    "estates_details":{
+        "us_kansas":{
+            "hjoijpojwdwda":{
+                "photos":[
+                    "http://prettyphoto2.com",
+                    "http://prettyphoto1.com"
+                ],
+                "photo": "http://prettyphoto.com",
+                "price": 500000,
+                "name": "Big Loft",
+                "latitude": -33.429072,
+                "longitude": -70.603748
+            },
+            "llmlwndlawndkawnd":{
+                "photos":[
+                    "http://prettyphoto2.com",
+                    "http://prettyphoto1.com"
+                ],
+                "photo": "http://prettyphoto.com",
+                "price": 500000,
+                "name": "Luxury Condo",
+                "latitude": -33.439072,
+                "longitude": -70.613748
+            }
+        },
+        "us_california":{
+            "wadknawoidjaw9d":{
+                "photos":[
+                    "http://prettyphoto2.com",
+                    "http://prettyphoto1.com"
+                ],
+                "photo": "http://prettyphoto.com",
+                "price": 500000,
+                "name": "Spanish Style",
+                "latitude": -33.429072,
+                "longitude": -70.603748
+            },
+            "w9sjaw0jd":{
+                "photos":[
+                    "http://prettyphoto2.com",
+                    "http://prettyphoto1.com"
+                ],
+                "photo": "http://prettyphoto.com",
+                "price": 1000,
+                "name": "2 bedrooms, 2 bathrooms",
+                "latitude": -33.439072,
+                "longitude": -70.613748
+            }
+        }
+    },
+    "real_estates":{
+        "us_kansas":{
+            "hjoijpojwdwda":{
+                "price": 500000,
+                "name": "Big Loft",
+                "latitude": -33.429072,
+                "longitude": -70.603748
+            },
+            "llmlwndlawndkawnd":{
+                "price": 500000,
+                "name": "Luxury Condo",
+                "latitude": -33.439072,
+                "longitude": -70.613748
+            }
+        },
+        "us_california":{
+            "wadknawoidjaw9d":{
+                "price": 500000,
+                "name": "Spanish Style",
+                "latitude": -33.429072,
+                "longitude": -70.603748
+            },
+            "w9sjaw0jd":{
+                "price": 1000,
+                "name": "2 bedrooms, 2 bathrooms",
+                "latitude": -33.439072,
+                "longitude": -70.613748
+            }
+        }
+    },    
+    "estates_category":{
+        "us_kansas":{
+            "hjoijpojwdwda": "rental",
+            "llmlwndlawndkawnd": "closure"
+        },
+        "us_california":{
+            "wadknawoidjaw9d": "sale",
+            "w9sjaw0jd": "closure"
+        }
+    }
+}
+```
 
- 1. Add your google-services.json inside the app folder or connect the app using the Android Studio assistant
- 2. You can [download a simple json for uploading to your database](https://www.dropbox.com/s/wobke3i5naiuik4/geodata.json?dl=0)
- 3. This project assume your database rules are ment to be write and read `true` regardless login or not, please mind this security, this is only for demostration purpouse
- 
- ### Why not Geofire?
- 
- Geofire is a great project, which simplify the georeferencing work, but I don't feel using a library for my data structure is ok.
-**For creating this I have base heavily in Geofire data structure**
+In the real estate example you have some very similar indexing to what is seen before. The funnel node for this is the country plus the city name.
 
-## How does it work?
+```
+{
+    "routes":{
+        "2017_08_28":{
+            "awkdbawoidboawidb":{
+                "package": "awkdbawoidboawidb",
+                "receiver": "Nice Person 1",
+                "latitude": -33.429072,
+                "longitude": -70.603748
+            },
+            "aowidh09awhdoaiwhd":{
+                "package": "aowidh09awhdoaiwhd",
+                "receiver": "Nice Person 2",
+                "latitude": -33.439072,
+                "longitude": -70.613748
+            }
+        },
+        "2017_08_27":{
+            "wadknawoidjaw9d":{
+                "package": "wadknawoidjaw9d",
+                "receiver": "Nice Person 3",
+                "name": "center included",
+                "latitude": -33.429072,
+                "longitude": -70.603748
+            }
+        }
+    },
+    "packages":{
+        "2017_08_27":{
+            "wadknawoidjaw9d":{
+                "package_id": "wadknawoidjaw9d",
+                "size": "Huge!",
+                "delivered": false,
+                "priority": "Same Day Delivery",
+                "address": "P. Sherman 42 Wallaby Way"
+            }
+        }
+    }
+}
+```
 
-It will look for locations arround the current location based on the longitude or latitude. To reduce the data delivered to the user, there is an extra node which is the country code. This country code is obtained by the sim country code. **This work as long as your app contemplate to be used by phones**, for using it the user will need 3G or 4G therefore it will have a SIM card. Another approach could be getting the location, get the country, and then set it as the funnel node.
-Once the funnel and query data is obtained there is a simple presenter filtering the data again by the other coordinate (latitude or longitude, the opposite of your query choice).
+In the delivery example, the delivery shifts are organized by date, and the date it self is the funnel node.
 
-# Esto de acá abajo, la indexación (al menos una mención), las reglas y cómo probar la app de prueba, tengo que probar la data
-## Will this deliver too much data?
+The funnel node is being mentioned several times, in this documentation that term has being preffered to emphasize the role of it, to narrow down the data. But a funnel node, as has being called here, is part of the **data fan-out** structure. You can read more about it:
 
+ - [Firebase Docs](https://firebase.google.com/docs/database/android/read-and-write)
+ - [Firebase Blog](https://firebase.googleblog.com/2015/10/client-side-fan-out-for-data-consistency_73.html)
+ - [StackOverflow Question](https://stackoverflow.com/questions/38181973/firebase-database-the-fan-out-technique)
+
+![High five](https://media.giphy.com/media/120jXUxrHF5QJ2/giphy.gif)
+
+## Database Rules
+Since you are gonna work with indexing, then you should use indexing, please read the [Firebase Docs](https://firebase.google.com/docs/database/security/indexing-data)
+
+## How to use the demo app
+
+ 1. git clone this repo
+ 2. Add your google-services.json inside the app folder or connect the app using the Android Studio assistant
+ 3. You can [download a simple json for uploading to your database](https://www.dropbox.com/s/wobke3i5naiuik4/geodata.json?dl=0)
+ 4. This project assume your database rules are ment to be write and read `true` regardless login or not, please mind this security, this is only for demostration purpouse. Set this rules in your database rules.
+ 5. You have to add an API key for using Google Maps, if you haven't done this before, create a new project and select `Google Maps Activity` that will create an `.xml` file inside the `values` folder, look at it and follow the instructions there. When you are finish you can copy paste that key or the whole file to this project.
+ 6. Or maybe just [download the .APK](https://www.dropbox.com/s/qo6rij8icsug4o5/app-debug.apk?dl=0)
+
+![Victory Dance](https://media.giphy.com/media/l41Yh18f5TbiWHE0o/giphy.gif)
+
+## How this work under the hood
+##### The problem
+
+## Will this delivery too much data?
 I don't think so. That is why there is funnel node with the country code. Since you can't make double queries in Firebase, the longitude-latitude requirement is hard to met. A composed attribute `long_lat` could work but it will face the same problem is attempted to solved here. To get the near data, 1km is more or less 0.01 degrees. So, current latitude, plus 0.01 and less 0.01 will give you 1km arround. The problem is that is not constrained by the other coordinate, so you get the entire world data. That could be a lot, and that cannot be solved by the compose attribute aproach, because the concatenation will also give you unexpected extra data. By this aproach, you limit whatever query only to a country reducing the ammount of data to something quickly transmitable for Firebase.
 
+##### Tests
+
+## Thanks to
+ - The people in [GeoFire](https://github.com/firebase/geofire-java) I was very inspired by their work
+ - The people in [Firebase-Ui-Android](https://github.com/firebase/FirebaseUI-Android) I learned a lot of what I use here looking at their `FirebaseRecyclerAdapter` and the `FirebaseIndexRecyclerAdapter`
+ - [Cristian Vidal](https://github.com/Himuravidal) we was working together on solving this prior to coming with the idea of this humble library
+
+## What's next?
+ - Something like a `FirebaseRecyclerAdapter` for Google Maps would be really cool
+ - Since this is for maps mostly, there should be some utility to adjust Google Map zoom based on the radius distance
+ - Better gifs! Better quality, full hd! Bigger, 2400px width! But most important, the dankest gif in the internet!
+
 **Suggestions and PRs are welcome**
+
+
+
+
+

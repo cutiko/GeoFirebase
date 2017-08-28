@@ -16,7 +16,7 @@ If you are not convinced yet on using this library, let me offer you one more pe
 
 # Add the library:
 
- 1. Add Firebase to your project as you have always done. I reccommend using the assistant, is in the menu `tools\Firebase`
+ 1. Add Firebase and the Firebase Database to your project as you have always done. I reccommend using the assistant, is in the menu `tools\Firebase`
  2. Add the library
 
 ```
@@ -34,7 +34,7 @@ Is very simple:
   2. And for executing the query you have to instantiate an abstract class from my library `GeoEvent`
 
 ### Creating the model
-Since the library is ment to be used with Geolocations, then the basic provided makes sure the object being query have: *longitude and lantitude*, also a *key* (we will get to this later).
+Since the library is ment to be used with Geolocations, then the basic model provided makes sure the object being query have: *longitude and latitude*, also a *key*.
 So the model you are gonna use for your *place*, *cofee shop*, or whatever is about your app have to extend `GeoPod`
 
 ```
@@ -239,6 +239,8 @@ root.updateChildren(map);
 
 After this you have to capture other user interactions, such as creating a favorite and upload it to that node.
 
+The above examples have the key included, because when the user interact with something that represent the object (a marker in the map, by example), then you can use the key to reach the complete version of the uploaded data. Remember, the full version of your object, can have a lot of attributes, to provide a lighter data transfer to the user a simplified version lead to a complete heavier node.
+
 You can read more about indexing and denormalization in the [Firebase Documentation](https://firebase.google.com/docs/database/android/structure-data) and in this great [series of videos by David East](https://www.youtube.com/watch?v=WacqhiI-g_o&list=PLl-K7zZEsYLlP-k-RKFa7RyNPa9_wCH2s)
 
 ![Mind Blown](https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif)
@@ -386,7 +388,7 @@ In the real estate example you have some very similar indexing to what is seen b
 
 In the delivery example, the delivery shifts are organized by date, and the date it self is the funnel node.
 
-The funnel node is being mentioned several times, in this documentation that term has being preffered to emphasize the role of it, to narrow down the data. But a funnel node, as has being called here, is part of the **data fan-out** structure. You can read more about it:
+The funnel node is being mentioned several times in this documentation, that term has being preffered to emphasize the role of it, to narrow down the data. But a funnel node, as has being called here, is part of the **data fan-out** structure. You can read more about it:
 
  - [Firebase Docs](https://firebase.google.com/docs/database/android/read-and-write)
  - [Firebase Blog](https://firebase.googleblog.com/2015/10/client-side-fan-out-for-data-consistency_73.html)
@@ -411,10 +413,10 @@ Since you are gonna work with indexing, then you should use indexing, please rea
 ## How this work under the hood
 ##### The problem
 
-## Will this delivery too much data?
+##### Will this delivery too much data?
 I don't think so. That is why there is funnel node with the country code. Since you can't make double queries in Firebase, the longitude-latitude requirement is hard to met. A composed attribute `long_lat` could work but it will face the same problem is attempted to solved here. To get the near data, 1km is more or less 0.01 degrees. So, current latitude, plus 0.01 and less 0.01 will give you 1km arround. The problem is that is not constrained by the other coordinate, so you get the entire world data. That could be a lot, and that cannot be solved by the compose attribute aproach, because the concatenation will also give you unexpected extra data. By this aproach, you limit whatever query only to a country reducing the ammount of data to something quickly transmitable for Firebase.
 
-##### Tests
+##### Experiments results
 
 ## Thanks to
  - The people in [GeoFire](https://github.com/firebase/geofire-java) I was very inspired by their work

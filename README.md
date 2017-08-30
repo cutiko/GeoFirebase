@@ -77,6 +77,8 @@ In this example when the data is return every object is placed on a marker in a 
 
 If your are not familiar with doing this kind of implementations, don't worry about it. Take a deep breath and do this: write `new GeoEven<>` pass inside the angle brackets `<>` your model, and then pass every argument to the constructor, one last thing that should fix everything: **press alt+enter and select implement methods**.
 
+If you want to know more about the arguments in the constructor, you can read more about [the radius](https://github.com/cutiko/GeoFirebase/wiki/The-Radius) and the [funnel node](https://github.com/cutiko/GeoFirebase/wiki/The-funnel-node) in the wiki.
+
 ![Hackerman](https://media.giphy.com/media/Q2W4hziDOyzu0/giphy.gif)
 
 

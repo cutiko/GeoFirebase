@@ -411,17 +411,61 @@ Since you are gonna work with indexing, then you should use indexing, please rea
 ![Victory Dance](https://media.giphy.com/media/l41Yh18f5TbiWHE0o/giphy.gif)
 
 ## How this work under the hood
-##### The problem
+This section is direct to really curious developers, and you should be familiar with Firebase.
 
-##### Will this delivery too much data?
-I don't think so. That is why there is funnel node with the country code. Since you can't make double queries in Firebase, the longitude-latitude requirement is hard to met. A composed attribute `long_lat` could work but it will face the same problem is attempted to solved here. To get the near data, 1km is more or less 0.01 degrees. So, current latitude, plus 0.01 and less 0.01 will give you 1km arround. The problem is that is not constrained by the other coordinate, so you get the entire world data. That could be a lot, and that cannot be solved by the compose attribute aproach, because the concatenation will also give you unexpected extra data. By this aproach, you limit whatever query only to a country reducing the ammount of data to something quickly transmitable for Firebase.
+##### The constraints
+Firebase Database doesn't allow queries with multiple params. So **we can't query by longitude and latitude at the same time**. You can see an explanation of how to do something like it in [this video](https://www.youtube.com/watch?v=sKFLI5FOOHs&feature=youtu.be&t=9m3s). In this case the problem of composing a key `lat_long` will be to get unexpected data. This problem is not completely solved by the approach chosen here, but it at least tackle. Let's say we wan to look for something near by the *latitude 10 and coordinate 10*. Then we should look for the `lat_long`, `start_at` *9_9* `end_at` *11_11*. This will give us the values we want, but also, values like *9_12*, *9_60*. This approach also add another problems. The coordinates most always be the same length, this means any writting in the database must be validated twice, by the client writting and by the database rules. The problem here is not only about format, but also about how coordinates work. Latitude range goes from 0 to 90 and longitude can be from 0 to 180. Disregarding decimals, this introdue the problem that for sorting correctly, the longitude *1* must be filled with zeros *001*.
+
+##### The chosen approach
+The funnel node or the data fan-out approach mentioned seems like a good solution. Using the same example, if we want everything near *latitude 10 and longitude 10* we will first query by *latitude* `start_at` *9* and `end_at` *11*, which will also gives other *longitude* values like *12* but it will filter out *60* because the funnel node doesn't contains it. If we are using as funnel node a country code, then what happens is: 
+
+ - You get every node near by *latitude* contained in the width of the country, but that is **less than the width of the world**.
+
+After that there is still work remaining, now the device has to loop through the data obtained. In this version of the library there is no `child listener` but a `value event listener for a single event`. So we have to iterate the `dataSnapshot` child's. **That iteration will filter out by longitude**. Finally the result is, every node near by latitude and longitude.
+
+```
+minLong = currentLong - radius;
+maxLong = currentLong + radius;
+if (objectLong >= minLong && objectLong <= maxLong) {
+	//We need this object
+}
+```
 
 ##### Experiments results
+My biggest concern, was to get too much data and the device wouldn't be able to loop quickly, however, I thought "well, this is Java it shouldn't be a problem iterate some thousands of objects". Turns out, I wasn't wrong, my results show it is trivial.
+
+Funny story, I was gonna do more testing with differents ammounts of data, but by mistake I upload the data in an eternal loop, had to force close the app to stop it, so the test was done with 14500 nodes. The first test was without indexing the data and the second was with data indexing (I'm talking about the Firebase Database rule).
+
+For the test I log the time when the request start, when the request deliver the response, and then when loop in the code end.
+
+The node distribution is about 1/3 for each *case*. There is 2/3 nodes that will be included in the the query, 1/3 nodes that will be excluded, wich will leaves later with 1/3 node that is filter in the loop.
+
+A final think to consider, the table also include the Firebase Database profiling.
+
+Results are in ms and were executed in an emulator simulating good signal.
+
+##### Non Indexed Results
+| Query Start - Result | Query Result - End of Loop | Profiling |
+|----------------------|----------------------------|-----------|
+| 3129                 | 672                        | 189       |
+
+##### Indexed Results
+| Query Start - Result | Query Result - End of Loop | Profiling |
+|----------------------|----------------------------|-----------|
+| 3950                 | 695                        | 144       |
+
+As you can see my concerns about the java loop executions is meaningless, even facts variations are small and pointless.
+
+I'm very surprise a 14000 nodes query in an online database took 3 seconds to reach the user.
+
+I don't know what to say about the difference in the profiling results... anyway a 14000 nodes query in less than 1 ms is something very awesome!
+
+![Too long do read](https://media.giphy.com/media/bEzUepnRubyGA/giphy.gif)
 
 ## Thanks to
  - The people in [GeoFire](https://github.com/firebase/geofire-java) I was very inspired by their work
  - The people in [Firebase-Ui-Android](https://github.com/firebase/FirebaseUI-Android) I learned a lot of what I use here looking at their `FirebaseRecyclerAdapter` and the `FirebaseIndexRecyclerAdapter`
- - [Cristian Vidal](https://github.com/Himuravidal) we was working together on solving this prior to coming with the idea of this humble library
+ - [Cristian Vidal](https://github.com/Himuravidal) we was working together on solving this prior to coming with the idea of this humble library, the fruitful discussions we had about this made possible this library.
 
 ## What's next?
  - Something like a `FirebaseRecyclerAdapter` for Google Maps would be really cool
